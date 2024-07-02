@@ -11,6 +11,8 @@ public class SnakeHead : BodyPart
     float addTimer = TIMETOADDBODYPART;
     public int partsToAdd = 0;
 
+    List<BodyPart> parts = new List<BodyPart>();
+
     // Start is called before the first frame update
     void Start()
     {
@@ -20,6 +22,8 @@ public class SnakeHead : BodyPart
     // Update is called once per frame
     override public void Update()
     {
+        if (!GameController.instance.alive) return;
+
         base.Update();
 
         SetMovement(movement);
@@ -49,16 +53,20 @@ public class SnakeHead : BodyPart
             newPart.following = this;
             tail = newPart;
             newPart.TurnIntoTail();
+
+            parts.Add(newPart);
         }
         else
         {
             Vector3 newPosition = tail.transform.position;
             newPosition.z = newPosition.z + 0.01f;
-            BodyPart newPart = Instantiate(GameController.instance.bodyPrefab, newPosition, Quaternion.identity);
+            BodyPart newPart = Instantiate(GameController.instance.bodyPrefab, newPosition, tail.transform.rotation);
             newPart.following = tail;
             newPart.TurnIntoTail();
             tail.TurnIntoBodyPart();
             tail = newPart;
+
+            parts.Add(newPart);
         }
     }
 
@@ -103,8 +111,18 @@ public class SnakeHead : BodyPart
 
     public void ResetSnake()
     {
+        foreach (BodyPart part in parts)
+        {
+            Destroy(part.gameObject);
+        }
+        parts.Clear();
+
         tail = null;
         MoveUp();
+
+        gameObject.transform.localEulerAngles = new Vector3(0, 0, 0); //up
+        gameObject.transform.position = new Vector3(0, 0, -8);
+
         partsToAdd = 5;
         addTimer = TIMETOADDBODYPART;
     }
@@ -115,10 +133,20 @@ public class SnakeHead : BodyPart
         if (egg)
         {
             Debug.Log("Hit egg");
+            EatEgg(egg);
         }
         else
         {
             Debug.Log("Hit obstacle");
+            GameController.instance.GameOver();
         }
+    }
+
+    private void EatEgg(Egg egg)
+    {
+        partsToAdd = 5;
+        addTimer = 0;
+
+        GameController.instance.EggEaten(egg);
     }
 }

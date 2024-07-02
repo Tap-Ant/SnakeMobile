@@ -28,6 +28,8 @@ public class BodyPart : MonoBehaviour
     // Update is called once per frame
     virtual public void Update()
     {
+        if (!GameController.instance.alive) return;
+
         Vector3 followPosition;
         if (following != null)
         {
