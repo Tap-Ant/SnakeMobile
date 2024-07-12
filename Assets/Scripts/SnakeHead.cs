@@ -13,6 +13,9 @@ public class SnakeHead : BodyPart
 
     List<BodyPart> parts = new List<BodyPart>();
 
+    public AudioSource[] gulpSounds = new AudioSource[3];
+    public AudioSource dieSound = null;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -134,11 +137,14 @@ public class SnakeHead : BodyPart
         {
             Debug.Log("Hit egg");
             EatEgg(egg);
+            int rand = Random.Range(0, 3);
+            gulpSounds[rand].Play();
         }
         else
         {
             Debug.Log("Hit obstacle");
             GameController.instance.GameOver();
+            dieSound.Play();
         }
     }
 
