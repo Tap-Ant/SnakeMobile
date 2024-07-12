@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class BodyPart : MonoBehaviour
@@ -22,6 +21,12 @@ public class BodyPart : MonoBehaviour
     void Start()
     {
         
+    }
+
+    public void ResetMemory()
+    {
+        setIndex = 0;
+        getIndex = -(PARTSREMEMBERED - 1);
     }
 
     // Update is called once per frame

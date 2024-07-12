@@ -29,7 +29,7 @@ public class SnakeHead : BodyPart
 
         base.Update();
 
-        SetMovement(movement);
+        SetMovement(movement * Time.deltaTime);
         UpdateDirection();
         UpdatePosition();
 
@@ -94,22 +94,22 @@ public class SnakeHead : BodyPart
 
     void MoveUp()
     {
-        movement = Vector2.up * GameController.instance.snakeSpeed * Time.deltaTime;
+        movement = Vector2.up * GameController.instance.snakeSpeed;
     }
 
     void MoveDown()
     {
-        movement = Vector2.down * GameController.instance.snakeSpeed * Time.deltaTime;
+        movement = Vector2.down * GameController.instance.snakeSpeed;
     }
 
     void MoveLeft()
     {
-        movement = Vector2.left * GameController.instance.snakeSpeed * Time.deltaTime;
+        movement = Vector2.left * GameController.instance.snakeSpeed;
     }
 
     void MoveRight()
     {
-        movement = Vector2.right * GameController.instance.snakeSpeed * Time.deltaTime;
+        movement = Vector2.right * GameController.instance.snakeSpeed;
     }
 
     public void ResetSnake()
@@ -125,6 +125,7 @@ public class SnakeHead : BodyPart
 
         gameObject.transform.localEulerAngles = new Vector3(0, 0, 0); //up
         gameObject.transform.position = new Vector3(0, 0, -8);
+        ResetMemory();
 
         partsToAdd = 5;
         addTimer = TIMETOADDBODYPART;

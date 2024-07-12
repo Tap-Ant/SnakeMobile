@@ -73,6 +73,7 @@ public class GameController : MonoBehaviour
     void StartGamePlay()
     {
         score = 0;
+        level = 0;
         scoreText.text = "Score: " + score;
         hiScoreText.text = "High Score: " + hiScore;
         gameOverText.gameObject.SetActive(false);
@@ -99,12 +100,6 @@ public class GameController : MonoBehaviour
     public void EggEaten(Egg egg)
     {
         score++;
-        if (score > hiScore)
-        {
-            hiScore = score;
-            hiScoreText.text = "High Score: " + hiScore; 
-        }
-        scoreText.text = "Score: " + score;
 
         noOfEggsForNextLevel--;
         if (noOfEggsForNextLevel == 0)
@@ -116,6 +111,13 @@ public class GameController : MonoBehaviour
             CreateEgg(true);
         else
             CreateEgg(false);
+
+        if (score > hiScore)
+        {
+            hiScore = score;
+            hiScoreText.text = "High Score: " + hiScore;
+        }
+        scoreText.text = "Score: " + score;
 
         eggs.Remove(egg);
         Destroy(egg.gameObject);
