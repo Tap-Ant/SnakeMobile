@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameController : MonoBehaviour
 {
@@ -26,6 +27,13 @@ public class GameController : MonoBehaviour
 
     int level = 0;
     int noOfEggsForNextLevel = 0;
+
+    public int score = 0;
+    public int hiScore = 0;
+    public Text scoreText = null;
+    public Text hiScoreText = null;
+    public Text tapToPlayText = null;
+    public Text gameOverText = null;
 
     // Start is called before the first frame update
     void Start()
@@ -58,10 +66,18 @@ public class GameController : MonoBehaviour
     {
         alive = false;
         waitingToPlay = true;
+        gameOverText.gameObject.SetActive(true);
+        tapToPlayText.gameObject.SetActive(true);
     }
 
     void StartGamePlay()
     {
+        score = 0;
+        scoreText.text = "Score: " + score;
+        hiScoreText.text = "High Score: " + hiScore;
+        gameOverText.gameObject.SetActive(false);
+        tapToPlayText.gameObject.SetActive(false);
+
         waitingToPlay = false;
         alive = true;
         KillOldEggs();
@@ -82,9 +98,18 @@ public class GameController : MonoBehaviour
 
     public void EggEaten(Egg egg)
     {
+        score++;
+        if (score > hiScore)
+        {
+            hiScore = score;
+            hiScoreText.text = "High Score: " + hiScore; 
+        }
+        scoreText.text = "Score: " + score;
+
         noOfEggsForNextLevel--;
         if (noOfEggsForNextLevel == 0)
         {
+            score += 10;
             LevelUp();
         }
         else if (noOfEggsForNextLevel == 1)
@@ -98,20 +123,20 @@ public class GameController : MonoBehaviour
 
     void CreateWalls()
     {
-        Vector3 start  = new Vector3(-width, -height, 0);
-        Vector3 finish = new Vector3(-width, +height, 0);
+        Vector3 start  = new Vector3(-width, -height, -1);
+        Vector3 finish = new Vector3(-width, +height, -1);
         CreateWall(start, finish);
 
-        start = new Vector3(+width, -height, 0);
-        finish = new Vector3(+width, +height, 0);
+        start = new Vector3(+width, -height, -1);
+        finish = new Vector3(+width, +height, -1);
         CreateWall(start, finish);
 
-        start = new Vector3(-width, -height, 0);
-        finish = new Vector3(+width, -height, 0);
+        start = new Vector3(-width, -height, -1);
+        finish = new Vector3(+width, -height, -1);
         CreateWall(start, finish);
 
-        start = new Vector3(-width, +height, 0);
-        finish = new Vector3(+width, +height, 0);
+        start = new Vector3(-width, +height, -1);
+        finish = new Vector3(+width, +height, -1);
         CreateWall(start, finish);
     }
 
