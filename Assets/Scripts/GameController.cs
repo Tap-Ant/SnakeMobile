@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.WSA;
 
 public class GameController : MonoBehaviour
 {
@@ -15,6 +16,7 @@ public class GameController : MonoBehaviour
     public GameObject rockPrefab = null;
     public GameObject eggPrefab = null;
     public GameObject goldEggPrefab = null;
+    public GameObject spikePrefab = null;
 
     public Sprite tailSprite = null;
     public Sprite bodySprite = null;
@@ -24,9 +26,12 @@ public class GameController : MonoBehaviour
     public bool waitingToPlay = true;
 
     List<Egg> eggs = new List<Egg>();
+    List<Spike> spikes = new List<Spike>();
 
     int level = 0;
     int noOfEggsForNextLevel = 0;
+    int noOfSpikesInLevel = 0;
+    Vector3 lastEggPosition;
 
     public int score = 0;
     public int hiScore = 0;
@@ -68,6 +73,7 @@ public class GameController : MonoBehaviour
         waitingToPlay = true;
         gameOverText.gameObject.SetActive(true);
         tapToPlayText.gameObject.SetActive(true);
+        noOfSpikesInLevel = 0;
     }
 
     void StartGamePlay()
@@ -82,6 +88,7 @@ public class GameController : MonoBehaviour
         waitingToPlay = false;
         alive = true;
         KillOldEggs();
+        KillOldSpikes();
         snakeHead.ResetSnake();
         LevelUp();
     }
@@ -90,11 +97,15 @@ public class GameController : MonoBehaviour
     {
         level++;
         noOfEggsForNextLevel = 4 + (level * 2);
+        noOfSpikesInLevel++;
         snakeSpeed = 1f + (level / 4f);
         if (snakeSpeed > 6) snakeSpeed = 6;
 
         snakeHead.ResetSnake();
         CreateEgg();
+
+        KillOldSpikes();
+        for (int i = 0; i < noOfSpikesInLevel; i++) CreateSpike();
     }
 
     public void EggEaten(Egg egg)
@@ -176,6 +187,23 @@ public class GameController : MonoBehaviour
         else
             egg = Instantiate(eggPrefab, position, Quaternion.identity).GetComponent<Egg>();
         eggs.Add(egg);
+        lastEggPosition = position;
+    }
+
+    void CreateSpike()
+    {
+        Vector3 position;
+        Vector3 center = new Vector3(0, 0, 0);
+        do
+        {
+            position.x = -width + Random.Range(1f, (width * 2) - 2f);
+            position.y = -height + Random.Range(1f, (height * 2) - 2f);
+            position.z = -1f;
+        } while ((position == lastEggPosition) || (Vector3.Distance(position,center)<1.0f));
+        
+        Spike spike = null;
+        spike = Instantiate(spikePrefab, position, Quaternion.identity).GetComponent<Spike>();
+        spikes.Add(spike);
     }
 
     void KillOldEggs()
@@ -185,5 +213,14 @@ public class GameController : MonoBehaviour
             Destroy(egg.gameObject);
         }
         eggs.Clear();
+    }
+
+    void KillOldSpikes()
+    {
+        foreach (Spike spike in spikes)
+        {
+            Destroy(spike.gameObject);
+        }
+        spikes.Clear();
     }
 }
