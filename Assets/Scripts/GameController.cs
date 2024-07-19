@@ -2,14 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.WSA;
 
 public class GameController : MonoBehaviour
 {
     public static GameController instance = null;
 
-    const float width = 3.7f;
-    const float height = 7f;
+    private Vector2 screenBounds;
+    static float width = 3.7f;
+    static float height = 7.0f;
     public float snakeSpeed = 1;
 
     public BodyPart bodyPrefab = null;
@@ -44,6 +44,9 @@ public class GameController : MonoBehaviour
     void Start()
     {
         instance = this;
+        screenBounds = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, Camera.main.transform.position.z));
+        width = screenBounds.x;
+        height = screenBounds.y;
         Debug.Log("Starting Snake Game");
         CreateWalls();
         alive = false;
@@ -80,6 +83,7 @@ public class GameController : MonoBehaviour
     {
         score = 0;
         level = 0;
+        noOfSpikesInLevel = 0;
         scoreText.text = "Score: " + score;
         hiScoreText.text = "High Score: " + hiScore;
         gameOverText.gameObject.SetActive(false);
@@ -193,13 +197,13 @@ public class GameController : MonoBehaviour
     void CreateSpike()
     {
         Vector3 position;
-        Vector3 center = new Vector3(0, 0, 0);
+        Vector3 center = new Vector3(0, 0, -1f);
         do
         {
             position.x = -width + Random.Range(1f, (width * 2) - 2f);
             position.y = -height + Random.Range(1f, (height * 2) - 2f);
             position.z = -1f;
-        } while ((position == lastEggPosition) || (Vector3.Distance(position,center)<1.0f));
+        } while ((Vector3.Distance(position, lastEggPosition)<2.0f) || (Vector3.Distance(position,center)<2.0f));
         
         Spike spike = null;
         spike = Instantiate(spikePrefab, position, Quaternion.identity).GetComponent<Spike>();
