@@ -39,6 +39,7 @@ public class GameController : MonoBehaviour
     public Text hiScoreText = null;
     public Text tapToPlayText = null;
     public Text gameOverText = null;
+    public GameObject grass = null;
 
     // Start is called before the first frame update
     void Start()
@@ -47,6 +48,10 @@ public class GameController : MonoBehaviour
         screenBounds = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, Camera.main.transform.position.z));
         width = screenBounds.x;
         height = screenBounds.y;
+        if ((width/height) > 0.0f)
+        {
+            grass.transform.localEulerAngles = new Vector3(0, 0, 90);
+        }
         Debug.Log("Starting Snake Game");
         CreateWalls();
         alive = false;
